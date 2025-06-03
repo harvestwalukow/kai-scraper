@@ -252,12 +252,12 @@ if __name__ == '__main__':
         ("JAKARTA KOTA", "JAKK"),
         ("JATINEGARA", "JNG")    
     ]
-    start_date_str = "2025-06-02"
-    num_days_to_scrape = 30 # Kurangi dulu untuk testing awal
+    start_date_str = "2025-06-03"
+    num_days_to_scrape = 1 # Kurangi dulu untuk testing awal
     adult_passengers = 1
     infant_passengers = 0
     delay_between_searches = 5 # Jeda lebih lama antar pencarian KAI
-    csv_output_filename = "jadwal_kereta_selenium.csv"
+    csv_output_filename = "git_test.csv"
     # --- AKHIR KONFIGURASI ---
 
     all_extracted_data = []
