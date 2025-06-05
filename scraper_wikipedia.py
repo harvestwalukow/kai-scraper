@@ -1,16 +1,17 @@
 '''
-Script untuk scraping data stasiun kereta api dari file Wikipedia HTML
+Script untuk scraping data stasiun kereta api dari Wikipedia
 dan menyimpannya dalam format tuple Python.
 '''
 from bs4 import BeautifulSoup
 import re
+import requests
 
-def scrape_stations_from_html(html_file_path):
+def scrape_stations_from_url(url):
     '''
-    Membaca file HTML Wikipedia dan mengekstrak nama stasiun beserta kodenya.
+    Mengambil data dari halaman Wikipedia dan mengekstrak nama stasiun beserta kodenya.
     
     Args:
-        html_file_path (str): Path ke file HTML Wikipedia
+        url (str): URL halaman Wikipedia
         
     Returns:
         list: List of tuples (nama_stasiun, kode_stasiun)
@@ -18,13 +19,11 @@ def scrape_stations_from_html(html_file_path):
     stations = []
     
     try:
-        with open(html_file_path, 'r', encoding='utf-8') as f:
-            html_content = f.read()
-    except FileNotFoundError:
-        print(f"Error: File '{html_file_path}' tidak ditemukan.")
-        return stations
-    except Exception as e:
-        print(f"Error saat membaca file: {e}")
+        response = requests.get(url)
+        response.raise_for_status()
+        html_content = response.text
+    except requests.RequestException as e:
+        print(f"Error saat mengambil halaman: {e}")
         return stations
     
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -188,15 +187,15 @@ def save_stations_to_file(stations, output_file):
 
 if __name__ == '__main__':
     # Konfigurasi
-    html_input_file = 'wikipedia.html'
+    wiki_url = 'https://id.wikipedia.org/wiki/Daftar_stasiun_kereta_api_di_Indonesia'
     txt_output_file = 'stasiun.txt'
     
-    print("Memulai scraping data stasiun dari Wikipedia HTML...")
-    print(f"File input: {html_input_file}")
+    print("Memulai scraping data stasiun dari Wikipedia...")
+    print(f"URL: {wiki_url}")
     print(f"File output: {txt_output_file}")
     
     # Scrape data stasiun
-    stations = scrape_stations_from_html(html_input_file)
+    stations = scrape_stations_from_url(wiki_url)
     
     if stations:
         print(f"\nBerhasil mengekstrak {len(stations)} stasiun:")
@@ -211,7 +210,7 @@ if __name__ == '__main__':
     else:
         print("\nTidak ada data stasiun yang berhasil diekstrak.")
         print("Kemungkinan penyebab:")
-        print("- Format tabel di HTML berbeda dari yang diharapkan")
+        print("- Format tabel di halaman berbeda dari yang diharapkan")
         print("- Tidak ada tabel dengan class 'wikitable'")
         print("- Struktur data berbeda dari pola yang dicari")
         
